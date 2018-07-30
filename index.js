@@ -117,7 +117,7 @@ class Misty {
    */
   static require (moduleName) {
     if (process.env.MISTY_ENV === 'development') {
-      return require(path.resolve(__dirname, `../node-${moduleName}`))
+      return require(path.resolve(__dirname, `../../../../node-${moduleName}`))
     }
 
     return require(`@supersoccer/${moduleName}`)
