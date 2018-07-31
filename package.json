@@ -25,7 +25,7 @@
     "serve-static": "^1.13.2"
   },
   "devDependencies": {
-    "docdash": "^0.4.0",
+    "@supersoccer/minako": "^1.0.0",
     "jsdoc": "^3.5.5"
   }
 }
