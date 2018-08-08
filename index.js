@@ -1,4 +1,5 @@
 const path = require('path')
+
 /**
  * Admin control panel package
  */
@@ -14,15 +15,6 @@ class Misty {
    */
   static get Bifrost () {
     return Misty.require('bifrost')
-  }
-
-  /**
-   * @see {@link https://supersoccer.github.io/node-path|Path documentation}
-   * @example
-   * const { Path } = require('@supersoccer/misty')
-   */
-  static get Path () {
-    return Misty.require('path')
   }
 
   /**
@@ -53,21 +45,12 @@ class Misty {
   }
 
   /**
-   * @see {@link https://supersoccer.github.io/node-template|Template documentation}
+   * @see {@link https://supersoccer.github.io/node-utils|Tools documentation}
    * @example
-   * const { Template } = require('@supersoccer/misty')
+   * const { Utils } = require('@supersoccer/misty')
    */
-  static get Template () {
-    return Misty.require('template')
-  }
-
-  /**
-   * @see {@link https://supersoccer.github.io/node-tools|Tools documentation}
-   * @example
-   * const { Tools } = require('@supersoccer/misty')
-   */
-  static get Tools () {
-    return Misty.require('tools')
+  static get Utils () {
+    return Misty.require('utils')
   }
 
   /**
@@ -85,14 +68,14 @@ class Misty {
    * const { Config } = require('@supersoccer/misty')
    */
   static get Config () {
-    return require('config')
+    return require('./config')
   }
 
   static get Cookie () {
     return require('cookie-parser')
   }
 
-  static get CDN () {
+  static get Assets () {
     return require('serve-static')
   }
 
@@ -116,11 +99,30 @@ class Misty {
    * @return {object} - Required object
    */
   static require (moduleName) {
-    if (process.env.MISTY_ENV === 'development') {
-      return require(path.resolve(__dirname, `../../../../node-${moduleName}`))
+    const modulePath = Misty.Config.isDebug
+      ? path.resolve(__dirname, `../../../../node-${moduleName}`)
+      : `@supersoccer/${moduleName}`
+    Misty.version(moduleName)
+    return require(modulePath)
+  }
+
+  static version (moduleName) {
+    moduleName = moduleName || 'misty'
+
+    let pkgPath = '.'
+
+    if (moduleName !== 'misty') {
+      pkgPath = Misty.Config.isDebug
+        ? path.resolve(__dirname, `../../../../node-${moduleName}`)
+        : path.resolve(__dirname, `../${moduleName}`)
     }
 
-    return require(`@supersoccer/${moduleName}`)
+    const pkg = require(`${pkgPath}/package.json`)
+    return `[misty] load ${pkg.name} ${pkg.version}`
+  }
+
+  static get appPath () {
+    return path.resolve(__dirname, '../../..')
   }
 
   /**
@@ -144,19 +146,28 @@ class Misty {
     this.use(Misty.Cookie())
     this.use(Misty.MarkoExpress())
     this.use(Misty.CSRF({cookie: true}))
-    this.use('/assets', Misty.CDN(Misty.Path.join(__dirname, 'assets')))
+
+    if (Misty.Config.Assets.enabled) {
+      let dir = Misty.Config.Assets.dir
+
+      if (typeof dir === 'undefined' || dir === '') {
+        dir = 'assets'
+      }
+
+      dir = dir.replace(/^\/+/, '')
+      this.use(`/${dir}`, Misty.Assets(path.resolve(Misty.appPath, dir)))
+    }
 
     await Misty.Bifrost.routes(this.App)
-  
-    let configSources = []
-  
-    for (let configSource of Misty.Config.util.getConfigSources()) {
-      configSources.push(configSource.name)
-    }
-  
-    this.App.listen(Misty.Config.app.port, () => {
-      console.log(`${Misty.Config.app.name} app listening on port ${Misty.Config.app.port}!`)
-      console.log(configSources)
+
+    const configSources = Misty.Config.util.getConfigSources().map(config => {
+      return config.name
+    })
+
+    this.App.listen(Misty.Config.App.port, () => {
+      console.log(`[misty] ${Misty.Config.App.name} app listening on port ${Misty.Config.App.port}!`)
+      console.log(`[misty] host ${Misty.Config.App.host}`)
+      console.log(`[misty] config ${configSources.join(', ')}`)
     })
   }
 }
