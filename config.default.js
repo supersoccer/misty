@@ -59,8 +59,8 @@ const defaultConfig = {
   },
   Yggdrasil: {
     misty: {
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_HOST || 'localhost',
+      port: process.env.REDIS_PORT || 6379,
       ttl: 3600,
       prefix: 'videos'
     }
