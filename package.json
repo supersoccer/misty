@@ -17,6 +17,7 @@
     "@supersoccer/mystique": "*",
     "@supersoccer/utils": "*",
     "@supersoccer/yggdrasil": "*",
+    "chalk": "^2.4.1",
     "config": "^2.0.0",
     "cookie-parser": "^1.4.3",
     "csurf": "^1.9.0",
@@ -24,6 +25,7 @@
     "lodash": "^4.17.10",
     "marko": "^4.12.3",
     "moment": "^2.22.2",
+    "morgan": "^1.9.0",
     "serve-static": "^1.13.2"
   },
   "devDependencies": {

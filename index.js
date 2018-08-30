@@ -93,6 +93,10 @@ class Misty {
     }
   }
 
+  static get Log () {
+    return require('./logger')
+  }
+
   /**
    * Wrapper of node native `require` method to load misty core module on development
    * @param {string} moduleName - Misty module to require
@@ -100,7 +104,7 @@ class Misty {
    */
   static require (moduleName) {
     const modulePath = Misty.Config.isDebug
-      ? path.resolve(__dirname, `../../../../node-${moduleName}`)
+      ? path.resolve(__dirname, `../node-${moduleName}`)
       : `@supersoccer/${moduleName}`
     Misty.version(moduleName)
     return require(modulePath)
@@ -113,7 +117,7 @@ class Misty {
 
     if (moduleName !== 'misty') {
       pkgPath = Misty.Config.isDebug
-        ? path.resolve(__dirname, `../../../../node-${moduleName}`)
+        ? path.resolve(__dirname, `../node-${moduleName}`)
         : path.resolve(__dirname, `../${moduleName}`)
     }
 
@@ -122,7 +126,8 @@ class Misty {
   }
 
   static get appPath () {
-    return path.resolve(__dirname, '../../..')
+    // TODO: Make configurable
+    return path.resolve(__dirname, Misty.Config.isDebug ? '../misty-app' : '../../..')
   }
 
   /**
@@ -142,10 +147,19 @@ class Misty {
    * Misty.start()
    */
   async start () {
+    Misty.Log.Misty(`load config files`)
+    Misty.Config.util.getConfigSources().forEach((config, idx) => {
+      Misty.Log.Misty(`${idx + 1}: ${config.name}`)
+    })
+
     this.boot()
     this.use(Misty.Cookie())
     this.use(Misty.MarkoExpress())
     this.use(Misty.CSRF({cookie: true}))
+
+    if (Misty.Config.isDev) {
+      this.use(Misty.Log.request)
+    }
 
     if (Misty.Config.Assets.enabled) {
       let dir = Misty.Config.Assets.dir
@@ -160,14 +174,11 @@ class Misty {
 
     await Misty.Bifrost.routes(this.App)
 
-    const configSources = Misty.Config.util.getConfigSources().map(config => {
-      return config.name
-    })
+    
 
     this.App.listen(Misty.Config.App.port, () => {
-      console.log(`[misty] ${Misty.Config.App.name} app listening on port ${Misty.Config.App.port}!`)
-      console.log(`[misty] host ${Misty.Config.App.host}`)
-      console.log(`[misty] config ${configSources.join(', ')}`)
+      Misty.Log.Misty(`${Misty.Config.App.name} app listening on port ${Misty.Config.App.port}!`)
+      Misty.Log.Misty(`host ${Misty.Config.App.host}`)
     })
   }
 }
