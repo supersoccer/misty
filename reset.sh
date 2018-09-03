@@ -4,15 +4,10 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$BASEDIR/..
 
 MODULES=(
-  misty-app
   node-bifrost
   node-dwarfs
   node-heimdallr 
   node-mystique
-  node-path
-  node-purge-marko
-  node-template
-  node-tools
   node-utils
   node-yggdrasil
 )

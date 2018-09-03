@@ -1,11 +1,14 @@
 const _ = require('lodash')
 const defaultConfig = require('./config.default')
 const userConfig = require('config')
+const Log = require('./logger')
+const env = require('./config.env')
 
 class Config {
   constructor () {
     this.data = _.mergeWith(defaultConfig, userConfig)
     this.data = this.mixin(this.data)
+    this.env()
     return this.data
   }
 
@@ -32,6 +35,15 @@ class Config {
     })
 
     return obj
+  }
+
+  env () {
+    Object.keys(env).forEach(key => {
+      if (process.env[key]) {
+        eval(`this.data.${env[key]} = process.env.${key}`)
+        Log.print(`${env[key]} was overwritten by ${key}`, 'Misty', 'red')
+      }
+    })
   }
 }
 
