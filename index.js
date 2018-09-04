@@ -114,7 +114,6 @@ class Misty {
     moduleName = moduleName || 'misty'
 
     let pkgPath = '.'
-
     if (moduleName !== 'misty') {
       pkgPath = Misty.Config.isDebug
         ? path.resolve(__dirname, `../node-${moduleName}`)
