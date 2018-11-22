@@ -20,6 +20,9 @@ const defaultConfig = {
     url: ($) => `${$.App.host}/${$.Assets.route.replace(/^\/+/, '')}`,
     version: moment().format('X')
   },
+  'Csrf': {
+    'whitelist': []
+  },
   Heimdallr: {
     host: 'https://accounts.supersoccer.tv',
     login: ($) => `${$.App.host}/accounts/login`,
@@ -34,9 +37,6 @@ const defaultConfig = {
       '/accounts/login',
       '/accounts/login/oauth'
     ]
-  },
-  'Csrf': {
-    'whitelist': []
   },
   IAM: {
     roles: [ 'delete', 'update', 'write', 'read' ]
