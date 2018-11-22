@@ -6,9 +6,7 @@
   "author": "hkyo89 <hkyo89@yahoo.co.jp>",
   "license": "MIT",
   "scripts": {
-    "doc": "jsdoc -c jsdoc.json",
-    "prepublishOnly": "rm -rf node-modules yarn.lock package-lock.json && yarn",
-    "postpublish": "./reset.sh"
+    "doc": "jsdoc -c jsdoc.json"
   },
   "dependencies": {
     "@supersoccer/bifrost": "*",
@@ -17,6 +15,7 @@
     "@supersoccer/mystique": "*",
     "@supersoccer/utils": "*",
     "@supersoccer/yggdrasil": "*",
+    "chalk": "^2.4.1",
     "config": "^2.0.0",
     "cookie-parser": "^1.4.3",
     "csurf": "^1.9.0",
@@ -24,10 +23,12 @@
     "lodash": "^4.17.10",
     "marko": "^4.12.3",
     "moment": "^2.22.2",
+    "morgan": "^1.9.0",
     "serve-static": "^1.13.2"
   },
   "devDependencies": {
     "@supersoccer/minako": "*",
+    "@supersoccer/semver": "*",
     "jsdoc": "^3.5.5"
   }
 }
