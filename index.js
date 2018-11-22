@@ -1,5 +1,15 @@
-const path = require('path')
+const notifier = require('node-notifier')
 
+if (process.env.NODE_ENV !== 'production') {
+  const longjohn = require('longjohn')
+  longjohn.empty_frame = 'ASYNC CALLBACK'
+  longjohn.async_trace_limit = -1
+}
+
+require('pretty-error').start()
+
+const path = require('path')
+const loadedModules = []
 /**
  * Admin control panel package
  */
@@ -106,7 +116,10 @@ class Misty {
     const modulePath = Misty.Config.isDebug
       ? path.resolve(__dirname, `../node-${moduleName}`)
       : `@supersoccer/${moduleName}`
-    Misty.version(moduleName)
+    if (loadedModules.indexOf(moduleName) < 0) {
+      loadedModules.push(moduleName)
+      Misty.version(moduleName)
+    }
     return require(modulePath)
   }
 
@@ -121,7 +134,7 @@ class Misty {
     }
 
     const pkg = require(`${pkgPath}/package.json`)
-    return `[misty] load ${pkg.name} ${pkg.version}`
+    return Misty.Log.Misty(`load ${pkg.name}@${pkg.version}`)
   }
 
   static get appPath () {
@@ -146,15 +159,29 @@ class Misty {
    * Misty.start()
    */
   async start () {
-    Misty.Log.Misty(`load config files`)
+    Misty.Log.Misty(`load config`)
+    const configSources = Misty.Config.util.getConfigSources()
+    Misty.Log.Misty(`→ path: ${configSources[0].name.replace(/[a-z0-9-_.]+$/, '')}`)
     Misty.Config.util.getConfigSources().forEach((config, idx) => {
-      Misty.Log.Misty(`${idx + 1}: ${config.name}`)
+      Misty.Log.Misty(`→ ${idx + 1}: ${config.name.replace(/^.+\//, '')}`)
     })
+
+    const csrfWhitelist = Misty.Config.Csrf.whitelist
 
     this.boot()
     this.use(Misty.Cookie())
     this.use(Misty.MarkoExpress())
-    this.use(Misty.CSRF({cookie: true}))
+    this.use(function(req, res, next) {
+      if (csrfWhitelist.indexOf(req.path) !== -1) {
+        next();
+      } else {
+        Misty.CSRF({cookie: true})(req, res, next)
+      }
+    })
+
+    if (Misty.Config.isDev) {
+      this.use(Misty.Log.request)
+    }
 
     if (Misty.Config.isDev) {
       this.use(Misty.Log.request)
@@ -173,11 +200,21 @@ class Misty {
 
     await Misty.Bifrost.routes(this.App)
 
-    
-
     this.App.listen(Misty.Config.App.port, () => {
-      Misty.Log.Misty(`${Misty.Config.App.name} app listening on port ${Misty.Config.App.port}!`)
-      Misty.Log.Misty(`host ${Misty.Config.App.host}`)
+      const pkg = require('./package.json')
+      const msg = `${Misty.Config.App.name} listening on port ${Misty.Config.App.port}`
+      Misty.Log.Misty(`${msg}`)
+      Misty.Log.Misty(`host: ${Misty.Config.App.host}`)
+      Misty.Log.Misty(`misty: ${pkg.name}@${pkg.version}`)
+      Misty.Log.Misty(`development: ${Misty.Config.isDev}`)
+      Misty.Log.Misty(`debug: ${Misty.Config.isDebug}`)
+
+      notifier.notify({
+        title: 'Misty',
+        message: `${msg}${Misty.Config.isDev ? `\nmode: development${Misty.Config.isDebug ? ', debug' : ''}` : ''}`,
+        icon: path.resolve(__dirname, 'icon.png'),
+        open: Misty.Config.App.host
+      })
     })
   }
 }

@@ -35,6 +35,9 @@ const defaultConfig = {
       '/accounts/login/oauth'
     ]
   },
+  'Csrf': {
+    'whitelist': []
+  },
   IAM: {
     roles: [ 'delete', 'update', 'write', 'read' ]
   },
@@ -53,7 +56,7 @@ const defaultConfig = {
       host: required('Dwarfs.misty.host'),
       user: required('Dwarfs.misty.user'),
       password: required('Dwarfs.misty.password'),
-      database: required('Dwarfs.misty.databse'),
+      database: required('Dwarfs.misty.database'),
       connectionLimit: 10
     }
   },
