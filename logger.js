@@ -89,6 +89,10 @@ class Log {
   static Bifrost (message) {
     return Log.print(message, 'bifrost', 'green')
   }
+
+  static Heimdallr (message) {
+    return Log.print(message, 'misty', 'yellow')
+  }
 }
 
 module.exports = Log

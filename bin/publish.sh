@@ -14,3 +14,5 @@ echo "> republish misty"
 npm publish
 cd $bin
 ./postpublish.sh
+echo "> commit git"
+./commit.sh
