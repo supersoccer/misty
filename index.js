@@ -183,6 +183,10 @@ class Misty {
       this.use(Misty.Log.request)
     }
 
+    if (Misty.Config.isDev) {
+      this.use(Misty.Log.request)
+    }
+
     if (Misty.Config.Assets.enabled) {
       let dir = Misty.Config.Assets.dir
 
