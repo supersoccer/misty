@@ -35,6 +35,9 @@ const defaultConfig = {
       '/accounts/login/oauth'
     ]
   },
+  'Csrf': {
+    'whitelist': []
+  },
   IAM: {
     roles: [ 'delete', 'update', 'write', 'read' ]
   },
@@ -53,14 +56,14 @@ const defaultConfig = {
       host: required('Dwarfs.misty.host'),
       user: required('Dwarfs.misty.user'),
       password: required('Dwarfs.misty.password'),
-      database: required('Dwarfs.misty.databse'),
+      database: required('Dwarfs.misty.database'),
       connectionLimit: 10
     }
   },
   Yggdrasil: {
     misty: {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: process.env.REDIS_PORT || 6379,
+      host: 'localhost',
+      port: 6379,
       ttl: 3600,
       prefix: 'videos'
     }
