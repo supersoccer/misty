@@ -2,7 +2,7 @@
   "name": "@supersoccer/misty",
   "version": "1.3.18",
   "main": "index.js",
-  "repository": "git://github.com/supersoccer/misty.git#1.3.18",
+  "repository": "git://github.com/supersoccer/misty.git#v1.3.18",
   "author": "hkyo89 <hkyo89@yahoo.co.jp>",
   "license": "MIT",
   "scripts": {
