@@ -30,6 +30,8 @@ const defaultConfig = {
     token: ($) => `${$.Heimdallr.host}/_/oauth2/v1/token`,
     identity: ($) => `${$.Heimdallr.host}/_/v1/userinfo`,
     callback: ($) => `${$.App.host}/accounts/login/oauth`,
+    loginPath: '/accounts/login',
+    callbackPath: '/accounts/login/oauth',
     state: required('Heimdallr.state'),
     scope: required('Heimdallr.scope'),
     cookie: '_mist',
